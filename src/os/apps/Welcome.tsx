@@ -10,7 +10,7 @@ const LOCAL_REPO: string = "https://github.com/RudraO2/Stratum";
 export function Welcome({ windowId }: AppProps) {
 	const closeWindow = useOS((s) => s.closeWindow);
 	return (
-		<div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "22px 26px 20px", fontSize: 14, lineHeight: 1.55 }}>
+		<div className="scroll" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", padding: "22px 26px 20px", fontSize: 14, lineHeight: 1.55, overflowY: "auto" }}>
 			<div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
 				<AppIcon app="stratum" size={40} />
 				<div>

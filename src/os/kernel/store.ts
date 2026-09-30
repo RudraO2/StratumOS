@@ -63,7 +63,7 @@ const savedTheme = ((): Theme => {
 	} catch {
 		/* storage blocked */
 	}
-	return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+	return "light";
 })();
 
 export const TASKBAR_HEIGHT = 48;
