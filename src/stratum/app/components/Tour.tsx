@@ -12,6 +12,7 @@ const STEPS: Step[] = [
 	{ target: "composer", title: "Ask Stratum", body: "Type a question, paste a Parliament question, or ask for a report. Pick one of the ready-made prompts below the box to see each kind.", place: "above" },
 	{ target: "attach", title: "Read a scanned page", body: "Attach an image of a page from the menu; the vision model reads it. The sample is a scanned coal directory page.", place: "above" },
 	{ target: "chip", title: "The routing chip", body: "The router classifies each request (ask, PQ reply, report, topics) and picks a model. Click to see the scores.", place: "above" },
+	{ target: "views", title: "Ask and Map", body: "Map shows the whole library as one connected picture: documents, subsidiaries, years and topics, with conflicts in red. Under any answer, Show on map lights up what it rested on.", place: "right" },
 	{ target: "library", title: "The library", body: "The eight sample documents, the facts read from them with their status, topics and the measured metrics.", place: "right" },
 	{ target: "seal", title: "The seal", body: "Outbound calls are refused before they run and counted here. Ask Stratum to open a website to see it work.", place: "right" },
 	{ target: "provider", title: "Honest about the models", body: "This build answers through open-weight models hosted on Groq. The real product runs local models on the officer's machine.", place: "below" },

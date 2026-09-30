@@ -61,7 +61,17 @@ export interface PendingImage {
 	base64: string;
 }
 
+/** What the map is showing an answer for: the nodes it used, and the question that produced it. */
+export interface Trace {
+	ids: string[];
+	label: string;
+}
+
 interface StratumState {
+	view: "ask" | "map";
+	trace: Trace | null;
+	setView(v: "ask" | "map"): void;
+	setTrace(t: Trace | null): void;
 	sessions: Session[];
 	currentId: string;
 	sealed: boolean;
@@ -118,6 +128,10 @@ const savedWidth = (() => {
 const first = makeSession();
 
 export const useStratum = create<StratumState>((set, get) => ({
+	view: "ask",
+	trace: null,
+	setView: (v) => set({ view: v }),
+	setTrace: (t) => set({ trace: t }),
 	sessions: [first],
 	currentId: first.id,
 	sealed: isSealed(),

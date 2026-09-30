@@ -3,6 +3,8 @@ import { downloadNode } from "../../../os/apps/Explorer";
 import { launch } from "../../../os/kernel/launch";
 import { useOS } from "../../../os/kernel/store";
 import { library, type AnswerTable, type AskCard, type Citation, type PqCard, type ReportCard, type TopicsCard, type ToolResult } from "../../engine";
+import { traceOf } from "../graph/model";
+import { useStratum } from "../store";
 import { StateDot, type DotState } from "./ui";
 
 const LABEL: CSSProperties = { color: "var(--label-tertiary)", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" };
@@ -17,13 +19,35 @@ export function openDocument(documentId: number | undefined, filename: string, p
 	launch("source", { documentId: doc.id, page: page ?? undefined, ...extra }, doc.filename);
 }
 
-export function CardShell({ title, tag, status, children }: { title: string; tag?: string; status?: "running" | "done" | "error"; children: ReactNode }) {
+/** Sends the nodes an answer rested on to the map and switches to it. */
+function MapButton({ card, label }: { card: ToolResult["card"]; label: string }) {
+	const setTrace = useStratum((s) => s.setTrace);
+	const setView = useStratum((s) => s.setView);
+	return (
+		<button
+			onClick={() => {
+				setTrace({ ids: [...traceOf(card)], label });
+				setView("map");
+			}}
+			title="See which documents, entities and years this answer rests on, on the map"
+			style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 9px", borderRadius: 999, border: "1px solid var(--border-l2)", background: "var(--bg-layer-1)", fontSize: 11.5 }}
+			onPointerEnter={(e) => (e.currentTarget.style.background = "var(--interactive-hover)")}
+			onPointerLeave={(e) => (e.currentTarget.style.background = "var(--bg-layer-1)")}
+		>
+			<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden><circle cx="4" cy="4" r="2.2" fill="none" stroke="currentColor" strokeWidth="1.3" /><circle cx="12" cy="5" r="2.2" fill="none" stroke="currentColor" strokeWidth="1.3" /><circle cx="8" cy="12" r="2.2" fill="none" stroke="currentColor" strokeWidth="1.3" /><path d="M5.8 5l4.4.3M5 6l2 4.2M11 7l-2 3.2" stroke="currentColor" strokeWidth="1.2" /></svg>
+			Show on map
+		</button>
+	);
+}
+
+export function CardShell({ title, tag, status, action, children }: { title: string; tag?: string; status?: "running" | "done" | "error"; action?: ReactNode; children: ReactNode }) {
 	return (
 		<section className="fade-up" style={{ border: "1px solid var(--border-l2)", borderRadius: 12, background: "var(--bg-layer-1)", overflow: "hidden" }}>
 			<header style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", borderBottom: "1px solid var(--border-l1)", background: "var(--bg-layer-2)", fontSize: 12.5 }}>
 				{status === "running" ? <Spinner /> : <StateDot state={status === "error" ? "warning" : "done"} size={8} />}
 				<span style={{ fontWeight: 600 }}>{title}</span>
 				{tag && <span style={{ color: "var(--label-secondary)" }}>· {tag}</span>}
+				{action}
 			</header>
 			<div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 12 }}>{children}</div>
 		</section>
@@ -164,7 +188,7 @@ export function ProducedLine({ produced }: { produced?: { path: string; name: st
 function AskView({ card, status, guard, composedBy }: { card: AskCard; status: "running" | "done" | "error"; guard?: { ok: boolean; checked: number; unsupported: number[] }; composedBy?: string }) {
 	const g = guard ?? card.guard;
 	return (
-		<CardShell title="Ask" tag={ROUTE_LABEL[card.route] ?? card.route} status={status}>
+		<CardShell title="Ask" tag={ROUTE_LABEL[card.route] ?? card.route} status={status} action={card.status === "answered" ? <MapButton card={card} label={card.question} /> : undefined}>
 			{card.status === "insufficient" && <Callout tone="info">Nothing in the library answers this. Stratum will not state a figure it cannot cite.</Callout>}
 			{card.table && <AnswerTableView table={card.table} />}
 			{card.discrepancies.map((d, i) => (
@@ -187,7 +211,7 @@ function PqView({ card, status, produced }: { card: PqCard; status: "running" | 
 	const unsupported = card.parts.reduce((n, p) => n + p.guard.unsupported.length, 0);
 	const checked = card.parts.reduce((n, p) => n + p.guard.checked, 0);
 	return (
-		<CardShell title="PQ reply" tag={[h.pq_house, h.pq_number, h.pq_date].filter(Boolean).join(" · ") || "draft"} status={status}>
+		<CardShell title="PQ reply" tag={[h.pq_house, h.pq_number, h.pq_date].filter(Boolean).join(" · ") || "draft"} status={status} action={<MapButton card={card} label={h.pq_subject ?? "PQ reply"} />}>
 			{h.pq_subject && <div style={{ fontWeight: 600, fontSize: 13.5 }}>{h.pq_subject}</div>}
 			{card.warnings.length > 0 && (
 				<Callout>
@@ -309,7 +333,7 @@ function LineChart({ series }: { series: Record<string, Array<[string, number]>>
 
 function ReportView({ card, status, produced }: { card: ReportCard; status: "running" | "done" | "error"; produced?: { path: string; name: string } }) {
 	return (
-		<CardShell title="Report" tag={card.title} status={status}>
+		<CardShell title="Report" tag={card.title} status={status} action={<MapButton card={card} label={card.title} />}>
 			{card.sections.map((s, i) => {
 				switch (s.type) {
 					case "heading":

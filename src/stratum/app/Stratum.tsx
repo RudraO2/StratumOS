@@ -11,6 +11,7 @@ import { SovereigntyDrawer } from "./components/SovereigntyDrawer";
 import { Tour, tourSeen } from "./components/Tour";
 import { Transcript } from "./components/Transcript";
 import { Pill, StateDot } from "./components/ui";
+import { MapView } from "./graph/GraphView";
 import { egressSnapshot, useStratum } from "./store";
 
 const FOLDER = <path d="M1.5 4a1 1 0 0 1 1-1h3.2l1.5 1.5h6.3a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" strokeWidth="1.2" />;
@@ -31,7 +32,10 @@ export function Stratum({ args, nonce }: AppProps) {
 	const newSession = useStratum((s) => s.newSession);
 	const drawerOpen = useStratum((s) => s.drawerOpen);
 	const drawerWidth = useStratum((s) => s.drawerWidth);
+	const view = useStratum((s) => s.view);
+	const setView = useStratum((s) => s.setView);
 	const session = useStratum((s) => s.current());
+	const onMap = view === "map";
 	const hero = session.turns.length === 0;
 	const egress = egressSnapshot(session);
 	const summary = library.summary();
@@ -44,17 +48,36 @@ export function Stratum({ args, nonce }: AppProps) {
 					<Wordmark />
 				</div>
 				<button
-					onClick={newSession}
+					onClick={() => {
+						setView("ask");
+						newSession();
+					}}
 					style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 38, borderRadius: 8, background: "var(--bg-layer-3)", border: "1px solid var(--border-l1)", fontWeight: 600, fontSize: 13 }}
 				>
 					<span style={{ fontSize: 16, lineHeight: 1 }}>+</span> New session
 				</button>
+				<div role="tablist" aria-label="View" data-tour="views" style={{ display: "flex", gap: 2, padding: 3, marginTop: 12, borderRadius: 9, background: "var(--bg-layer-3)" }}>
+					{([["ask", "Ask"], ["map", "Map"]] as const).map(([id, label]) => (
+						<button
+							key={id}
+							role="tab"
+							aria-selected={view === id}
+							onClick={() => setView(id)}
+							style={{ flex: 1, height: 28, borderRadius: 7, fontSize: 12.5, fontWeight: view === id ? 600 : 400, background: view === id ? "var(--bg-layer-1)" : "transparent", color: view === id ? "var(--label-primary)" : "var(--label-secondary)", boxShadow: view === id ? "0 1px 2px rgba(0,0,0,0.12)" : undefined }}
+						>
+							{label}
+						</button>
+					))}
+				</div>
 				<div style={{ color: "var(--label-secondary)", fontSize: 12, padding: "18px 4px 8px" }}>Sessions</div>
 				<div className="scroll" style={{ flex: 1, overflowY: "auto" }}>
 					{sessions.map((s) => (
 						<button
 							key={s.id}
-							onClick={() => selectSession(s.id)}
+							onClick={() => {
+								setView("ask");
+								selectSession(s.id);
+							}}
 							style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, width: "100%", padding: "7px 10px", borderRadius: 6, background: s.id === currentId ? "var(--selector)" : "transparent", textAlign: "left", fontSize: 13 }}
 							onPointerEnter={(e) => (e.currentTarget.style.background = "var(--interactive-hover)")}
 							onPointerLeave={(e) => (e.currentTarget.style.background = s.id === currentId ? "var(--selector)" : "transparent")}
@@ -90,9 +113,9 @@ export function Stratum({ args, nonce }: AppProps) {
 
 			<main style={{ flex: 1, minWidth: 0, position: "relative", display: "flex", flexDirection: "column", paddingRight: drawerOpen ? drawerWidth : 0, transition: "padding-right 120ms ease" }}>
 				<Overlays />
-				{!hero && (
+				{(onMap || !hero) && (
 					<header style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 18px", borderBottom: "1px solid var(--border-l1)" }}>
-						<span style={{ fontWeight: 600, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.title}</span>
+						<span style={{ fontWeight: 600, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{onMap ? "Library map" : session.title}</span>
 						<ProviderPill />
 						<Pill title="Outbound attempts denied and recorded this session, counted from the session log.">
 							<StateDot state={egress.count > 0 ? "error" : "done"} size={8} />
@@ -100,7 +123,9 @@ export function Stratum({ args, nonce }: AppProps) {
 						</Pill>
 					</header>
 				)}
-				{hero ? (
+				{onMap ? (
+					<MapView />
+				) : hero ? (
 					<div className="scroll" style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 22, padding: 24, overflowY: "auto" }}>
 						<Hero />
 						<div style={{ width: "100%", maxWidth: 780, display: "flex", alignItems: "center", gap: 14, fontSize: 14, color: "var(--label-primary)", paddingLeft: 6 }}>
