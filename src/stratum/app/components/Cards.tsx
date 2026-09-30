@@ -10,11 +10,11 @@ const LABEL: CSSProperties = { color: "var(--label-tertiary)", fontSize: 10, fon
 const ROUTE_LABEL: Record<string, string> = { sql: "Verified facts", rag: "Documents", sql_rag: "Facts and documents" };
 const STATUS_DOT: Record<string, DotState> = { verified: "done", consistent: "done", flagged: "warning", rejected: "error" };
 
-/** Open a library document (at a page when the PDF has one) in the workstation's browser. */
-export function openDocument(documentId: number | undefined, filename: string, page?: number | null) {
+/** Open a library document in the source viewer, at the page and the exact place a figure or passage came from. */
+export function openDocument(documentId: number | undefined, filename: string, page?: number | null, extra: { bbox?: number[] | null; factId?: number; chunkId?: number; snippet?: string } = {}) {
 	const doc = library.documents().find((d) => d.id === documentId) ?? library.documents().find((d) => d.filename === filename);
 	if (!doc) return;
-	launch("browser", { url: `/library/${doc.filename}${page && doc.filename.endsWith(".pdf") ? `#page=${page}` : ""}` }, doc.filename);
+	launch("source", { documentId: doc.id, page: page ?? undefined, ...extra }, doc.filename);
 }
 
 export function CardShell({ title, tag, status, children }: { title: string; tag?: string; status?: "running" | "done" | "error"; children: ReactNode }) {
@@ -105,7 +105,7 @@ export function Citations({ citations }: { citations: Citation[] }) {
 						<li key={c.n} style={{ display: "flex", gap: 8, fontSize: 12, lineHeight: 1.45 }}>
 							<span className="tabular" style={{ color: "var(--accent)", fontWeight: 600, minWidth: 22 }}>[{c.n}]</span>
 							<span style={{ minWidth: 0 }}>
-								<button onClick={() => openDocument(c.document_id, c.filename, c.page_no)} title="Open the document at this page" style={{ color: "var(--label-primary)", textDecoration: "underline", textDecorationColor: "var(--border-l3)", textAlign: "left", overflowWrap: "anywhere" }}>
+								<button onClick={() => openDocument(c.document_id, c.filename, c.page_no, { bbox: c.bbox, factId: c.fact_id, chunkId: c.chunk_id, snippet: c.snippet })} title="Open the source, with the exact place marked" style={{ color: "var(--label-primary)", textDecoration: "underline", textDecorationColor: "var(--border-l3)", textAlign: "left", overflowWrap: "anywhere" }}>
 									{c.filename}
 									{c.page_no ? ` · p.${c.page_no}` : ""}
 								</button>
@@ -219,7 +219,7 @@ function PqView({ card, status, produced }: { card: PqCard; status: "running" | 
 					<ul style={{ margin: "6px 0 0", paddingLeft: 18, fontSize: 12.5, lineHeight: 1.5 }}>
 						{card.similar.map((s) => (
 							<li key={s.document_id}>
-								<button onClick={() => openDocument(s.document_id, s.filename, s.page_no)} style={{ textDecoration: "underline", textDecorationColor: "var(--border-l3)" }}>
+								<button onClick={() => openDocument(s.document_id, s.filename, s.page_no, { snippet: s.snippet })} style={{ textDecoration: "underline", textDecorationColor: "var(--border-l3)" }}>
 									{[s.house, s.number, s.date && `(${s.date})`].filter(Boolean).join(" ")}
 								</button>
 								{s.subject ? ` — ${s.subject}` : ""}

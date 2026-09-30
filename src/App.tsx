@@ -12,9 +12,11 @@ import { useOS } from "./os/kernel/store";
 import { Boot } from "./os/shell/Boot";
 import { Desktop } from "./os/shell/Desktop";
 import { Library } from "./stratum/app/Library";
+import { Source } from "./stratum/app/Source";
 import { Stratum } from "./stratum/app/Stratum";
 
 registerApp({ id: "stratum", title: "Stratum", component: Stratum, w: 1180, h: 760, singleton: true, pinned: true, desktop: true });
+registerApp({ id: "source", title: "Source viewer", component: Source, w: 1040, h: 720, singleton: true });
 registerApp({ id: "library", title: "Library", component: Library, w: 980, h: 640, singleton: true, pinned: true, desktop: true });
 registerApp({ id: "explorer", title: "File Explorer", component: Explorer, w: 860, h: 540, singleton: true, pinned: true, desktop: true });
 registerApp({ id: "terminal", title: "Terminal", component: Terminal, w: 820, h: 480, singleton: true, pinned: true, desktop: true });

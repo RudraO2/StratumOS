@@ -6,7 +6,7 @@ import { AppIcon } from "./Icon";
 export function StartMenu() {
 	const { startOpen, setStartOpen } = useOS();
 	if (!startOpen) return null;
-	const apps = allApps().filter((a) => a.id !== "viewer");
+	const apps = allApps().filter((a) => a.id !== "viewer" && a.id !== "source");
 	return (
 		<div
 			className="acrylic fade-up"

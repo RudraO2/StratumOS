@@ -7,6 +7,14 @@ export function AppIcon({ app, size = 32, style }: { app: string; size?: number;
 		case "stratum":
 		case "welcome":
 			return <img src="/favicon.svg" alt="" style={{ ...s, borderRadius: Math.max(4, size * 0.22) }} draggable={false} />;
+		case "source":
+			return (
+				<svg viewBox="0 0 32 32" style={s} aria-hidden>
+					<path d="M7 3h13l6 6v20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="#eef2f7" stroke="#b9c3d0" />
+					<rect x="10" y="15" width="12" height="5" rx="1" fill="#e2894f" opacity="0.85" />
+					<path d="M10 11h12M10 24h8" stroke="#8a94a6" strokeWidth="1.6" strokeLinecap="round" />
+				</svg>
+			);
 		case "library":
 			return (
 				<svg viewBox="0 0 32 32" style={s} aria-hidden>

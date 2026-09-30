@@ -81,7 +81,7 @@ function Documents() {
 					{docs.map((d) => (
 						<tr key={d.id} style={{ borderTop: "1px solid var(--border-l1)" }}>
 							<td style={{ ...TD, whiteSpace: "normal" }}>
-								<button onClick={() => openDocument(d.id, d.filename)} title="Open the document" style={{ textAlign: "left", textDecoration: "underline", textDecorationColor: "var(--border-l3)", overflowWrap: "anywhere" }}>
+								<button onClick={() => openDocument(d.id, d.filename)} title="Open the document in the viewer" style={{ textAlign: "left", textDecoration: "underline", textDecorationColor: "var(--border-l3)", overflowWrap: "anywhere" }}>
 									{d.filename}
 								</button>
 								{d.pq_number && <div style={{ color: "var(--label-secondary)", fontSize: 11.5 }}>{[d.pq_house, d.pq_number, d.pq_date].filter(Boolean).join(" · ")}</div>}
@@ -203,7 +203,7 @@ function Lineage({ id, onClose }: { id: number; onClose: () => void }) {
 			{row("Fact", `${l.entity_name} · ${l.metric_label} · ${l.period}`)}
 			{row("Value", `${l.value} ${l.unit_label}`)}
 			{row("Status", l.status)}
-			{row("Document", doc ? <button onClick={() => openDocument(doc.id, doc.filename, l.page_no)} style={{ textDecoration: "underline", textAlign: "left" }}>{doc.filename}</button> : "—")}
+			{row("Document", doc ? <button onClick={() => openDocument(doc.id, doc.filename, l.page_no, { factId: l.id })} style={{ textDecoration: "underline", textAlign: "left" }}>{doc.filename}</button> : "—")}
 			{row("Page", l.page_no ?? "—")}
 			{row("Cell text", l.raw_text ? <span className="mono">{l.raw_text}</span> : "—")}
 			{l.conversion && row("Conversion", l.conversion)}

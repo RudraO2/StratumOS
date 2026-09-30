@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { AppProps } from "../kernel/apps";
 import { HOME, isTextMime, normalizePath, parentOf, type FsNode } from "../kernel/fs";
 import { launch } from "../kernel/launch";
+import { library } from "../../stratum/engine";
 import { useOS } from "../kernel/store";
 import { AppIcon } from "../shell/Icon";
 
@@ -34,7 +35,11 @@ export function openFile(path: string) {
 		launch("explorer", { path });
 		return;
 	}
-	if (node.href) launch("browser", { url: node.href }, node.name);
+	if (node.href) {
+		const doc = library.documents().find((d) => d.filename === node.name);
+		if (doc) launch("source", { documentId: doc.id }, node.name);
+		else launch("browser", { url: node.href }, node.name);
+	}
 	else if (isTextMime(node.mime)) launch("notepad", { path }, node.name + " - Notepad");
 	else if (node.mime.startsWith("image/")) launch("viewer", { path }, node.name);
 	else downloadNode(node);
