@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Stratum mark: a copper tile cut as a cross-section of rock (three wavy strata, darker with depth) with one white point on a layer boundary - a figure found in the layer and traced to its cell. Reads on light and dark tab strips alike, so one file serves both. Same artwork as StratumMark in client.js. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="96" height="96" role="img" aria-label="Stratum">
+	<title>Stratum</title>
+	<rect width="24" height="24" rx="6.5" fill="#b5561f"/>
+	<path d="M0 9.8C6 7.6 13 12.2 24 9.2V17.5A6.5 6.5 0 0 1 17.5 24H6.5A6.5 6.5 0 0 1 0 17.5Z" fill="#2a1206" opacity="0.16"/>
+	<path d="M0 13.6C7 11.6 14 15.9 24 13V17.5A6.5 6.5 0 0 1 17.5 24H6.5A6.5 6.5 0 0 1 0 17.5Z" fill="#2a1206" opacity="0.2"/>
+	<path d="M0 17.3C7.5 15.6 15 19.2 24 16.8V17.5A6.5 6.5 0 0 1 17.5 24H6.5A6.5 6.5 0 0 1 0 17.5Z" fill="#2a1206" opacity="0.26"/>
+	<circle cx="15.7" cy="13.9" r="1.9" fill="#ffffff"/>
+</svg>
