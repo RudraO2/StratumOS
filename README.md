@@ -5,7 +5,7 @@
 > already read and extracted, and the wording comes from **hosted open-weight models through the Groq API**
 > (GPT-OSS-20B for text, Qwen3.8-27B for page images): the only way a public link can answer.
 >
-> **The real product runs on the officer's own machine** — local models (Qwen3-4B, Qwen3-VL-2B) on a 4 GB
+> **The real product ([RudraO2/Stratum](https://github.com/RudraO2/Stratum)) runs on the officer's own machine** — local models (Qwen3-4B, Qwen3-VL-2B) on a 4 GB
 > GPU, nothing leaves it, and any document dropped in is parsed, checked and added. Here the library is
 > fixed and adding a document is **not** simulated.
 

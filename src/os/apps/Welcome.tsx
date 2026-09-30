@@ -3,8 +3,8 @@ import { launch } from "../kernel/launch";
 import { useOS } from "../kernel/store";
 import { AppIcon } from "../shell/Icon";
 
-/** The full project (Python backend, local models). Not published yet; the link appears once this is set. */
-const LOCAL_REPO: string = "";
+/** The full project: Python backend and local models. */
+const LOCAL_REPO: string = "https://github.com/RudraO2/Stratum";
 
 /** The first-run notice: the disclaimer comes first, in one line, then what is and is not simulated. */
 export function Welcome({ windowId }: AppProps) {
